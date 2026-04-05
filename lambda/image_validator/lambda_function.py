@@ -42,21 +42,38 @@ def lambda_handler(event, context):
     print("=== image validator invoked ===")
 
     # todo: loop through event['Records']
+    for record in event['Records']:
     # todo: for each record, get the SNS message string from record['Sns']['Message']
+        messageString = record['Sns']['Message']
     # todo: parse the SNS message string as JSON to get the S3 event
+        s3_event = json.loads(messageString)
     # todo: loop through the S3 event's 'Records'
+        for s3_record in s3_event['Records']:
     # todo: extract bucket name from s3_record['s3']['bucket']['name']
+            bucket = s3_record['s3']['bucket']['name']
     # todo: extract object key from s3_record['s3']['object']['key']
+            key = s3_record['s3']['object']['key']
     # todo: use is_valid_image() to check the file extension
+            if (is_valid_image(key)):
+                print(f"[Valid] {key} is a valid image file")
     # todo: if valid:
     #         - print the [VALID] message: print(f"[VALID] {key} is a valid image file")
     #         - get the filename from the key (e.g. "uploads/test.jpg" -> "test.jpg")
     #           hint: use key.split('/')[-1]
+                filename = os.path.splitext(key.split('/')[-1])[0]
     #         - copy the object to processed/valid/{filename}
     #           hint: s3.copy_object(Bucket=bucket, Key=f"processed/valid/{filename}",
     #                 CopySource={'Bucket': bucket, 'Key': key})
+                s3.copy_object(
+                    Bucket=bucket,
+                    Key=f"processed/valid/{filename}",
+                    CopySource={'Bucket': bucket, 'Key': key}
+                )
     # todo: if invalid:
     #         - print the [INVALID] message: print(f"[INVALID] {key} is not a valid image type")
     #         - raise ValueError to trigger DLQ
+            else:
+                print(f"[INVALID] {key} is not a valid image type")
+                raise ValueError
 
     return {'statusCode': 200, 'body': 'validation complete'}
