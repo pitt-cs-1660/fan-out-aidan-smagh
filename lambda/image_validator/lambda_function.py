@@ -55,7 +55,7 @@ def lambda_handler(event, context):
             key = s3_record['s3']['object']['key']
     # todo: use is_valid_image() to check the file extension
             if (is_valid_image(key)):
-                print(f"[Valid] {key} is a valid image file")
+                print(f"[VALID] {key} is a valid image file")
     # todo: if valid:
     #         - print the [VALID] message: print(f"[VALID] {key} is a valid image file")
     #         - get the filename from the key (e.g. "uploads/test.jpg" -> "test.jpg")
