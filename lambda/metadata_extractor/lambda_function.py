@@ -45,6 +45,7 @@ def lambda_handler(event, context):
         s3_event = json.loads(messageString)
     # todo: loop through the S3 event's 'Records'
         for s3_record in s3_event['Records']:
+            
     # todo: extract bucket name from s3_record['s3']['bucket']['name']
             bucket = s3_record['s3']['bucket']['name']
     # todo: extract object key from s3_record['s3']['object']['key']
